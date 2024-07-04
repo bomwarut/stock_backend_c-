@@ -19,23 +19,6 @@ namespace WebApplication1.Controllers
         [HttpGet(Name = "/product")]
         public Object Index()
         {
-            /*ADD*/
-            /*product newProduct = new product();
-            newProduct.product_price = 990;
-            newProduct.product_name = "coke";
-            newProduct.product_code = "91223";
-            db.Add(newProduct);
-            db.SaveChanges();*/
-
-            /*product targetWithSelect = db.products.FirstOrDefault(e => e.product_id == 1 || e.product_code.Equals("999111"));*/
-            /*product target = db.products.Find(2);*/
-
-            /*UPDATE*/
-            /*target.product_name = target.product_name + " | " + new Random().NextDouble() * 5.0f;
-            db.Update(target);
-            db.SaveChanges();*/
-
-            // List<product>
             List<product> products = db.products.ToList();
             return new
             {

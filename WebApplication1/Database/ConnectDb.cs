@@ -1,6 +1,4 @@
-﻿using MySqlConnector;
-using Mysqlx.Crud;
-namespace WebApplication1.Database
+﻿namespace WebApplication1.Database
 {
     public class ConnectDb
     {
