@@ -17,9 +17,7 @@ public partial class DatabaseContext : DbContext
     }
 
     public virtual DbSet<product> products { get; set; }
-
     public virtual DbSet<stock> stocks { get; set; }
-
     public virtual DbSet<stock_history> stock_histories { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

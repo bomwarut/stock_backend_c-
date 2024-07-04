@@ -12,7 +12,7 @@ public partial class stock_history
     /// <summary>
     /// 1 = รับสินค้าเข้าคลัง, 2=เบิกสินค้าออกคลัง
     /// </summary>
-    public bool stock_type { get; set; }
+    public int stock_type { get; set; }
 
     public int quantity { get; set; }
 
