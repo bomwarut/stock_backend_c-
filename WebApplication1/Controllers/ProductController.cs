@@ -87,6 +87,17 @@ namespace WebApplication1.Controllers
                 existingStock.stock_update_at = DateTime.Now;
                 db.stocks.Update(existingStock);
                 db.SaveChanges();
+
+                var historyEntry = new stock_history
+                {
+                    stock_id = existingStock.stock_id,
+                    stock_type = 1,
+                    quantity = existingStock.product_quantity,
+                    stock_history_update_at = DateTime.Now
+                };
+                db.stock_histories.Add(historyEntry);
+                db.SaveChanges();
+
                 return JsonWithReferenceHandler(new { success = true, updatedStock = existingStock });
             }
             else
@@ -94,30 +105,54 @@ namespace WebApplication1.Controllers
                 var newStock = new stock
                 {
                     product_id = request.ProductId,
-                    product_quantity = request.Quantity,
+                    product_quantity = existingStock.product_quantity,
                     stock_update_at = DateTime.Now
                 };
                 db.stocks.Add(newStock);
                 db.SaveChanges();
+
+                var historyEntry = new stock_history
+                {
+                    stock_id = newStock.stock_id,
+                    stock_type = 1,
+                    quantity = existingStock.product_quantity,
+                    stock_history_update_at = DateTime.Now
+                };
+                db.stock_histories.Add(historyEntry);
+                db.SaveChanges();
+
                 return JsonWithReferenceHandler(new { success = true, newStock });
             }
         }
 
-        [HttpPost("withdrawstock")]
-        public IActionResult Withdrawstock([FromBody] AddStockRequest request)
+        [HttpPost("withdrawStock")]
+        public IActionResult WithdrawStock([FromBody] WithdrawStockRequest request)
         {
             var product = db.products.Find(request.ProductId);
             if (product == null)
             {
                 return NotFound(new { success = false, message = "Product not found" });
             }
-
             var existingStock = db.stocks.FirstOrDefault(s => s.product_id == request.ProductId);
-                existingStock.product_quantity -= request.Quantity;
-                existingStock.stock_update_at = DateTime.Now;
-                db.stocks.Update(existingStock);
-                db.SaveChanges();
-                return JsonWithReferenceHandler(new { success = true, updatedStock = existingStock });
+            if (existingStock == null || existingStock.product_quantity < request.Quantity)
+            {
+                return BadRequest(new { success = false, message = "Insufficient stock quantity" });
+            }
+            existingStock.product_quantity -= request.Quantity;
+            existingStock.stock_update_at = DateTime.Now;
+            db.stocks.Update(existingStock);
+            db.SaveChanges();
+
+            var historyEntry = new stock_history
+            {
+                stock_id = existingStock.stock_id,
+                stock_type = 2,
+                quantity = existingStock.product_quantity,
+                stock_history_update_at = DateTime.Now
+            };
+            db.stock_histories.Add(historyEntry);
+            db.SaveChanges();
+            return JsonWithReferenceHandler(new { success = true, updatedStock = existingStock });
         }
 
         private IActionResult JsonWithReferenceHandler(object data)
@@ -137,6 +172,12 @@ namespace WebApplication1.Controllers
         }
 
         public class AddStockRequest
+        {
+            public int ProductId { get; set; }
+            public int Quantity { get; set; }
+        }
+
+        public class WithdrawStockRequest
         {
             public int ProductId { get; set; }
             public int Quantity { get; set; }

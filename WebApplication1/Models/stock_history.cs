@@ -9,9 +9,6 @@ public partial class stock_history
 
     public int stock_id { get; set; }
 
-    /// <summary>
-    /// 1 = รับสินค้าเข้าคลัง, 2=เบิกสินค้าออกคลัง
-    /// </summary>
     public int stock_type { get; set; }
 
     public int quantity { get; set; }
